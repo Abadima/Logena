@@ -1,0 +1,15 @@
+# Package Management
+package-lock.json
+node_modules
+
+# TypeScript Files
+tsconfig.json
+*.ts
+
+# Source Files
+assets
+.gitignore
+dist/src
+eslint.config.mjs
+src
+Tests
