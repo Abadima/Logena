@@ -1,6 +1,6 @@
-import Logger from "../logger";
+import {Logena} from "../logger";
 
-Logger.set({
+Logena.set({
 	appName: "LOGENA", 
 	colors: {
 		appName: "brightGreen",
@@ -10,6 +10,6 @@ Logger.set({
 	useTimestamps: true
 });
 
-Logger.info("This is an info message");
-Logger.warn("This is a warning message");
-Logger.error("This is an error message");
+Logena.info("This is an info message");
+Logena.warn("This is a warning message");
+Logena.error("This is an error message");

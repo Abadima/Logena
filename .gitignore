@@ -1,6 +1,8 @@
 # Package Management
 package-lock.json
+pnpm-lock.yaml
 node_modules
 
 # Dist Files
-dist
+logger.d.ts
+logger.js

@@ -1,15 +1,16 @@
 # Package Management
 package-lock.json
+pnpm-lock.yaml
 node_modules
 
 # TypeScript Files
 tsconfig.json
-*.ts
+logger.ts
 
 # Source Files
 assets
 .gitignore
-dist/src
+.gitattributes
+CHANGELOGS.md
 eslint.config.mjs
 src
-Tests

@@ -61,12 +61,13 @@ npm install logena
 - `appName` (optional): `string` - Set the application name (Overrides preset name).
 - `message`: `string | object` - The message to log.
 
-# Examples
+# JS Examples
+- TypeScript works as well, via import syntax.
 ```js
-const logena = require('logena');
-// or import logena from 'logena';
+const {Logena} = require('logena');
+// or import Logena from 'logena';
 
-logena.set({
+Logena.set({
     debug: true,
     appName: "LOGENA",
     colors: {
@@ -78,10 +79,10 @@ logena.set({
     useTimestamps: true
 });
 
-logena.info("Hello, world!"); // 2024-10-15 18:00:00Z [LOGENA] INFO: Hello, world!
-logena.warn("Hello, world!"); // 2024-10-15 18:00:00Z [LOGENA] WARN: Hello, world!
-logena.error("Hello, world!"); // 2024-10-15 18:00:00Z [LOGENA] ERROR: Hello, world!
-logena.debug("Hello, world!"); // 2024-10-15 18:00:00Z [LOGENA] DEBUG: Hello, world!
+Logena.info("Hello, world!"); // 2024-10-15 18:00:00Z [LOGENA] INFO: Hello, world!
+Logena.warn("Hello, world!"); // 2024-10-15 18:00:00Z [LOGENA] WARN: Hello, world!
+Logena.error("Hello, world!"); // 2024-10-15 18:00:00Z [LOGENA] ERROR: Hello, world!
+Logena.debug("Hello, world!"); // 2024-10-15 18:00:00Z [LOGENA] DEBUG: Hello, world!
 ```
 
 # License

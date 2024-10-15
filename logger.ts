@@ -28,25 +28,25 @@ const terminalColors = {
 
 /**
  * Logger Class
- * @class Logger
+ * @class Logena
  * @description A simple logger class that can be used to log messages to the console.
  * @example const logger = new Logger();
  * @example logger.set({ debug: true, appName: 'MyApp', useTimestamps: true });
  * @example logger.info('This is a log message');
  */
-class Logger {
-	private appName: string = "";
-	private colors: {
-        timestamp?: keyof typeof terminalColors.textColors,
-        appName?: keyof typeof terminalColors.textColors,
-        message?: keyof typeof terminalColors.textColors,
-        levels: {
-            info: keyof typeof terminalColors.textColors,
-            warn: keyof typeof terminalColors.textColors,
-            error: keyof typeof terminalColors.textColors,
-            debug: keyof typeof terminalColors.textColors
-        }
-    } = {
+class Logena {
+	private static appName: string = "";
+	private static colors: {
+		timestamp?: keyof typeof terminalColors.textColors,
+		appName?: keyof typeof terminalColors.textColors,
+		message?: keyof typeof terminalColors.textColors,
+		levels: {
+			info: keyof typeof terminalColors.textColors,
+			warn: keyof typeof terminalColors.textColors,
+			error: keyof typeof terminalColors.textColors,
+			debug: keyof typeof terminalColors.textColors
+		}
+	} = {
 			levels: {
 				info: "blue",
 				warn: "yellow",
@@ -54,26 +54,25 @@ class Logger {
 				debug: "cyan"
 			}
 		};
-	private debugMode: boolean = false;
-	private useTimestamps: boolean = false;
+	private static debugMode: boolean = false;
+	private static useTimestamps: boolean = false;
 
-
-	set(config: { 
-        debug?: boolean, 
-        appName?: string, 
-        useTimestamps?: boolean, 
-        colors?: {
-            timestamp?: keyof typeof terminalColors.textColors,
-            appName?: keyof typeof terminalColors.textColors,
-            message?: keyof typeof terminalColors.textColors,
-            levels?: {
-                info?: keyof typeof terminalColors.textColors,
-                warn?: keyof typeof terminalColors.textColors,
-                error?: keyof typeof terminalColors.textColors,
-                debug?: keyof typeof terminalColors.textColors
-            }
-        } 
-    }): void {
+	static set(config: { 
+		debug?: boolean, 
+		appName?: string, 
+		useTimestamps?: boolean, 
+		colors?: {
+			timestamp?: keyof typeof terminalColors.textColors,
+			appName?: keyof typeof terminalColors.textColors,
+			message?: keyof typeof terminalColors.textColors,
+			levels?: {
+				info?: keyof typeof terminalColors.textColors,
+				warn?: keyof typeof terminalColors.textColors,
+				error?: keyof typeof terminalColors.textColors,
+				debug?: keyof typeof terminalColors.textColors
+			}
+		} 
+	}): void {
 		if (config.appName !== undefined) this.appName = config.appName;
 		if (config.debug !== undefined) this.debugMode = config.debug;
 		if (config.useTimestamps !== undefined) this.useTimestamps = config.useTimestamps;
@@ -89,7 +88,7 @@ class Logger {
 		}
 	}
 
-	private formatMessage(level: string, message: string | object): string {
+	private static formatMessage(level: string, message: string | object): string {
 		const formatTimestamp = (date: Date): string => date.toISOString().replace("T", " ").replace(/\..+/, "Z");
 
 		const timestamp = this.useTimestamps ? `${terminalColors.textColors[this.colors.timestamp || "white"]}${formatTimestamp(new Date())}${terminalColors.reset} ` : "";
@@ -100,39 +99,40 @@ class Logger {
 	}
 
 	/**
-     * Log an info message to the console
-     * @param (string | object) message - The message to log
-     * @returns void
-     */
-	info(message: string | object): void {
+	 * Log an info message to the console
+	 * @param (string | object) message - The message to log
+	 * @returns void
+	 */
+	static info(message: string | object): void {
 		console.log(this.formatMessage("INFO", message));
 	}
 
 	/**
-     * Log a warning to the console
-     * @param (string | object) message - The message to log
-     */
-	warn(message: string | object): void {
+	 * Log a warning to the console
+	 * @param (string | object) message - The message to log
+	 */
+	static warn(message: string | object): void {
 		console.warn(this.formatMessage("WARN", message));
 	}
 
 	/**
-     * Log an error to the console
-     * @param (string | object) message - The message to log
-     */
-	error(message: string | object): void {
+	 * Log an error to the console
+	 * @param (string | object) message - The message to log
+	 */
+	static error(message: string | object): void {
 		console.error(this.formatMessage("ERROR", message));
 	}
 
 	/**
-     * Log a debug message to the console
-     * @param (string | object) message - The message to log
-     */
-	debug(message: string | object): void {
+	 * Log a debug message to the console
+	 * @param (string | object) message - The message to log
+	 */
+	static debug(message: string | object): void {
 		if (this.debugMode) {
 			console.debug(this.formatMessage("DEBUG", message));
 		}
 	}
 }
 
-export default new Logger();
+export {Logena};
+export default Logena;
