@@ -3,14 +3,19 @@ package-lock.json
 pnpm-lock.yaml
 node_modules
 
-# TypeScript Files
+# TypeScript & Build Files
 tsconfig.json
-logger.ts
+src
+tests
+.eslintignore
+eslint.config.mjs
 
-# Source Files
+# Documentation & Config
 assets
 .gitignore
 .gitattributes
 CHANGELOGS.md
-eslint.config.mjs
-src
+.github
+
+# Tests
+tests
