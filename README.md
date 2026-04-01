@@ -1,5 +1,4 @@
 ![Logena](assets/logena.webp)
-
 I've made this simple logging system to help keep my logging consistent across projects. While unoriginal, it's a somewhat decent package for those looking for the same ideas I had in mind, since this one's a little different from others I've wanted to use.
 
 ## Features
@@ -25,20 +24,20 @@ npm install logena
 #### Parameters
 
 - `config`: An object containing configuration options.
-  - `debug` (optional): `boolean` - Enable or disable debug mode.
-  - `appName` (optional): `string` - Set the application name.
-  - `useTimestamps` (optional): `boolean` - Enable or disable timestamps in logs.
-  - `meowOnError` (optional): `boolean` - When `true`, prints an ASCII kitty before error logs.
-  - `errorCatAscii` (optional): `string` - Custom ASCII cat text shown when `meowOnError` is enabled.
-  - `colors` (optional): `object` - Customize colors.
-    - `timestamp`: `string` - Color for the timestamp.
-    - `appName`: `string` - Color for the application name.
-    - `message`: `string` - Color for the message.
-    - `levels`: `object` - Customize colors for different log levels.
-      - `info`: `string` - Color for info level logs.
-      - `warn`: `string` - Color for warn level logs.
-      - `error`: `string` - Color for error level logs.
-      - `debug`: `string` - Color for debug level logs.
+- `debug` (optional): `boolean` - Enable or disable debug mode.
+- `appName` (optional): `string` - Set the application name.
+- `useTimestamps` (optional): `boolean` - Enable or disable timestamps in logs.
+- `meowOnError` (optional): `boolean` - When `true`, prints an ASCII kitty before error logs.
+- `errorCatAscii` (optional): `string` - Custom ASCII cat text shown when `meowOnError` is enabled.
+- `colors` (optional): `object` - Customize colors.
+- `timestamp`: `string` - Color for the timestamp.
+- `appName`: `string` - Color for the application name.
+- `message`: `string` - Color for the message.
+- `levels`: `object` - Customize colors for different log levels.
+- `info`: `string` - Color for info level logs.
+- `warn`: `string` - Color for warn level logs.
+- `error`: `string` - Color for error level logs.
+- `debug`: `string` - Color for debug level logs.
 
 ### `logena.info`
 
@@ -79,10 +78,8 @@ Both default and named imports work in TypeScript. CommonJS supports destructuri
 ```ts
 // TypeScript: default import
 import Logena from "logena";
-
 // TypeScript: named import (also works)
 import { Logena } from "logena";
-
 // JavaScript/CommonJS: destructured require
 const { Logena } = require("logena");
 ```
@@ -102,12 +99,26 @@ Logena.set({
 	},
 	useTimestamps: true,
 });
-
 Logena.info("Hello, world!"); // 2024-10-15 18:00:00Z [LOGENA] INFO: Hello, world!
 Logena.warn("Hello, world!"); // 2024-10-15 18:00:00Z [LOGENA] WARN: Hello, world!
 Logena.error("Hello, world!"); // 2024-10-15 18:00:00Z [LOGENA] ERROR: Hello, world!
 Logena.debug("Hello, world!"); // 2024-10-15 18:00:00Z [LOGENA] DEBUG: Hello, world!
 ```
+
+# Performance
+
+Benchmarked at 100,000 iterations per level with console I/O suppressed, on an AMD Ryzen 9 9950X3D running Ubuntu 25.10.
+
+| Level | Median | p95    | p99    | Mean   | Ops/sec    |
+| ----- | ------ | ------ | ------ | ------ | ---------- |
+| info  | 40 ns  | 60 ns  | 140 ns | 54 ns  | 25,000,000 |
+| warn  | 110 ns | 130 ns | 230 ns | 151 ns | 9,090,909  |
+| error | 60 ns  | 80 ns  | 90 ns  | 68 ns  | 16,666,667 |
+| debug | 190 ns | 220 ns | 270 ns | 211 ns | 5,263,158  |
+
+Total RSS growth across all levels: **+11.695 MB**
+
+> Benchmarks are measured with console I/O suppressed to isolate formatting overhead. Real-world numbers will vary depending on output destination and system load.
 
 # License
 
