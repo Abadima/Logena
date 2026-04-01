@@ -11,6 +11,11 @@
       "require": "./dist/logger.js"
     }
   },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
   "scripts": {
     "build": "eslint . --fix && tsc && uglifyjs dist/logger.js --comments all -o dist/logger.js",
     "test": "npm run build && npm run test:regression",

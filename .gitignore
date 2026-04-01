@@ -2,9 +2,3 @@
 package-lock.json
 pnpm-lock.yaml
 node_modules
-
-# Dist Files
-src/tests.d.ts
-src/tests.js
-logger.d.ts
-logger.js
