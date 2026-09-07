@@ -69,11 +69,19 @@ declare const LEVEL_MAP: {
 type LevelName = keyof typeof LEVEL_MAP;
 /**
  * Logger Class
+ *
+ * A simple logger class that can be used to log messages to the console.
+ *
+ * @example
+ * 	const logger = new Logger();
+ *
+ * @example
+ * 	logger.set({ debug: true, appName: "MyApp", useTimestamps: true });
+ *
+ * @example
+ * 	logger.info("This is a log message");
+ *
  * @class Logena
- * @description A simple logger class that can be used to log messages to the console.
- * @example const logger = new Logger();
- * @example logger.set({ debug: true, appName: 'MyApp', useTimestamps: true });
- * @example logger.info('This is a log message');
  */
 declare class Logena {
     private static readonly defaultErrorCat;
@@ -122,23 +130,27 @@ declare class Logena {
     private static formatMessage;
     /**
      * Log an info message to the console
-     * @param (...unknown[]) args - One or more values to log; supports legacy 2-arg appName override
-     * @returns void
+     *
+     * @param (...unknown[]) Args - One or more values to log; supports legacy 2-arg appName override
+     * @returns Void
      */
     static info(...args: unknown[]): void;
     /**
      * Log a warning to the console
-     * @param (...unknown[]) args - One or more values to log; supports legacy 2-arg appName override
+     *
+     * @param (...unknown[]) Args - One or more values to log; supports legacy 2-arg appName override
      */
     static warn(...args: unknown[]): void;
     /**
      * Log an error to the console
-     * @param (...unknown[]) args - One or more values to log; supports legacy 2-arg appName override
+     *
+     * @param (...unknown[]) Args - One or more values to log; supports legacy 2-arg appName override
      */
     static error(...args: unknown[]): void;
     /**
      * Log a debug message to the console
-     * @param (...unknown[]) args - One or more values to log; supports legacy 2-arg appName override
+     *
+     * @param (...unknown[]) Args - One or more values to log; supports legacy 2-arg appName override
      */
     static debug(...args: unknown[]): void;
 }

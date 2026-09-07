@@ -7,8 +7,8 @@ node_modules
 tsconfig.json
 src
 tests
-.eslintignore
-eslint.config.mjs
+.oxlintrc.json
+.oxfmtrc.json
 
 # Documentation & Config
 assets

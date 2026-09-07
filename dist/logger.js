@@ -11,47 +11,59 @@ success:"[38;5;82m",failure:"[38;5;167m",warning:"[38;5;214m",info:"[38;5;11
 const LEVEL_MAP={debug:0,info:1,warn:2,error:3};
 /**
  * Logger Class
+ *
+ * A simple logger class that can be used to log messages to the console.
+ *
+ * @example
+ * 	const logger = new Logger();
+ *
+ * @example
+ * 	logger.set({ debug: true, appName: "MyApp", useTimestamps: true });
+ *
+ * @example
+ * 	logger.info("This is a log message");
+ *
  * @class Logena
- * @description A simple logger class that can be used to log messages to the console.
- * @example const logger = new Logger();
- * @example logger.set({ debug: true, appName: 'MyApp', useTimestamps: true });
- * @example logger.info('This is a log message');
  */class Logena{static defaultErrorCat=" /\\_/\\\n( o.o )\n > ^ <  meow!";static appName="";static colors={levels:{info:"blue",warn:"yellow",error:"red",debug:"cyan"}};static debugMode=false;static useTimestamps=false;static meowOnError=false;static errorCatAscii=Logena.defaultErrorCat;
-// minLevel: numeric gate applied before argument parsing -- zero cost when at default (0 = debug).
+// MinLevel: numeric gate applied before argument parsing -- zero cost when at default (0 = debug).
 static minLevel=0;
-// noColor: strips all ANSI escape codes; useful for CI pipelines and file-based log sinks.
+// NoColor: strips all ANSI escape codes; useful for CI pipelines and file-based log sinks.
 static noColor=false;
-// serializeObjects: false emits type shorthands ([Object], [Array]) -- zero JSON parse cost.
+// SerializeObjects: false emits type shorthands ([Object], [Array]) -- zero JSON parse cost.
 static serializeObjects=true;static _prefixCache={info:"",warn:"",error:"",debug:""};static _levelPrefixCache={info:"",warn:"",error:"",debug:""};static _timestampColor="";static _appColorOpen="";static _appColorClose="";
 // Cached reset code -- empty string when noColor is true, avoids branching inside formatMessage.
 static _reset=terminalColors.reset;
 // Per-second timestamp cache: avoids new Date().toISOString() (~1500 ns) on every log call.
-static _cachedTimestamp="";static _cachedTimestampSec=-1;static parseLogArguments(args){if(args.length===2&&typeof args[1]==="string"&&(typeof args[0]==="string"||typeof args[0]==="object")){return{appName:args[1],messages:[args[0]]}}return{messages:args}}static stringifyPart(part){if(typeof part==="string")return part;
+static _cachedTimestamp="";static _cachedTimestampSec=-1;static parseLogArguments(args){if(args.length===2&&typeof args[1]==="string"&&(typeof args[0]==="string"||typeof args[0]==="object")){return{appName:args[1],messages:[args[0]]}}return{messages:args}}static stringifyPart(part){if(typeof part==="string"){return part}
 // Error instances: always emit stack (includes message) -- JSON.stringify drops the stack.
-if(part instanceof Error)return part.stack??part.message;if(!this.serializeObjects){if(part===null)return"null";if(Array.isArray(part))return"[Array]";if(typeof part==="object")return"[Object]";return String(part)}try{return JSON.stringify(part)}catch{return String(part)}}static set(config){if(config.appName!==undefined)this.appName=config.appName;if(config.debug!==undefined)this.debugMode=config.debug;if(config.useTimestamps!==undefined)this.useTimestamps=config.useTimestamps;if(config.meowOnError!==undefined)this.meowOnError=config.meowOnError;if(config.errorCatAscii!==undefined){this.errorCatAscii=config.errorCatAscii.trim()?config.errorCatAscii:Logena.defaultErrorCat}if(config.minLevel!==undefined)this.minLevel=LEVEL_MAP[config.minLevel];if(config.noColor!==undefined)this.noColor=config.noColor;if(config.serializeObjects!==undefined)this.serializeObjects=config.serializeObjects;if(config.colors!==undefined){const c=config.colors;if(c.timestamp!==undefined)this.colors.timestamp=c.timestamp;if(c.appName!==undefined)this.colors.appName=c.appName;if(c.message!==undefined)this.colors.message=c.message;if(c.levels!==undefined){const l=c.levels;if(l.info!==undefined)this.colors.levels.info=l.info;if(l.warn!==undefined)this.colors.levels.warn=l.warn;if(l.error!==undefined)this.colors.levels.error=l.error;if(l.debug!==undefined)this.colors.levels.debug=l.debug}}this.rebuildCache()}static rebuildCache(){
-// noColor path: emit ANSI-free plain text -- shorter strings, no escape code overhead in pipelines.
-if(this.noColor){this._reset="";this._timestampColor="";this._appColorOpen="[ ";this._appColorClose=" ] ";const defaultAppPart=this.appName?`[ ${this.appName} ] `:"";const levels=["info","warn","error","debug"];for(const level of levels){const levelPrefix=`${level.toUpperCase()}: `;this._prefixCache[level]=`${defaultAppPart}${levelPrefix}`;this._levelPrefixCache[level]=levelPrefix}return}this._reset=terminalColors.reset;const reset=terminalColors.reset;const appNameColorKey=this.colors.appName??"white";const appNameColor=terminalColors.textColors[appNameColorKey]??terminalColors.textColors.white;const messageColorKey=this.colors.message??"white";const messageColor=terminalColors.textColors[messageColorKey]??terminalColors.textColors.white;const timestampColorKey=this.colors.timestamp??"white";this._timestampColor=terminalColors.textColors[timestampColorKey]??terminalColors.textColors.white;this._appColorOpen=`${appNameColor}[ `;this._appColorClose=` ]${reset} `;const defaultAppPart=this.appName?`${this._appColorOpen}${this.appName}${this._appColorClose}`:"";const levels=["info","warn","error","debug"];for(const level of levels){const levelColorKey=this.colors.levels[level];const levelColor=terminalColors.textColors[levelColorKey]??terminalColors.textColors.blue;const levelPrefix=`${levelColor}${level.toUpperCase()}${reset}: ${messageColor}`;this._prefixCache[level]=`${defaultAppPart}${levelPrefix}`;this._levelPrefixCache[level]=levelPrefix}}static _formatTimestamp(){
+if(part instanceof Error){return part.stack??part.message}if(!this.serializeObjects){if(part===null){return"null"}if(Array.isArray(part)){return"[Array]"}if(typeof part==="object"){return"[Object]"}return String(part)}try{return JSON.stringify(part)}catch{return String(part)}}static set(config){if(config.appName!==undefined){this.appName=config.appName}if(config.debug!==undefined){this.debugMode=config.debug}if(config.useTimestamps!==undefined){this.useTimestamps=config.useTimestamps}if(config.meowOnError!==undefined){this.meowOnError=config.meowOnError}if(config.errorCatAscii!==undefined){this.errorCatAscii=config.errorCatAscii.trim()?config.errorCatAscii:Logena.defaultErrorCat}if(config.minLevel!==undefined){this.minLevel=LEVEL_MAP[config.minLevel]}if(config.noColor!==undefined){this.noColor=config.noColor}if(config.serializeObjects!==undefined){this.serializeObjects=config.serializeObjects}if(config.colors!==undefined){const colorsConfig=config.colors;if(colorsConfig.timestamp!==undefined){this.colors.timestamp=colorsConfig.timestamp}if(colorsConfig.appName!==undefined){this.colors.appName=colorsConfig.appName}if(colorsConfig.message!==undefined){this.colors.message=colorsConfig.message}if(colorsConfig.levels!==undefined){const levelsConfig=colorsConfig.levels;if(levelsConfig.info!==undefined){this.colors.levels.info=levelsConfig.info}if(levelsConfig.warn!==undefined){this.colors.levels.warn=levelsConfig.warn}if(levelsConfig.error!==undefined){this.colors.levels.error=levelsConfig.error}if(levelsConfig.debug!==undefined){this.colors.levels.debug=levelsConfig.debug}}}this.rebuildCache()}static rebuildCache(){
+// NoColor path: emit ANSI-free plain text -- shorter strings, no escape code overhead in pipelines.
+if(this.noColor){this._reset="";this._timestampColor="";this._appColorOpen="[ ";this._appColorClose=" ] ";const defaultAppPart=this.appName?`[ ${this.appName} ] `:"";const levels=["info","warn","error","debug"];for(const level of levels){const levelPrefix=`${level.toUpperCase()}: `;this._prefixCache[level]=`${defaultAppPart}${levelPrefix}`;this._levelPrefixCache[level]=levelPrefix}return}this._reset=terminalColors.reset;const{reset}=terminalColors;const appNameColorKey=this.colors.appName??"white";const appNameColor=terminalColors.textColors[appNameColorKey]??terminalColors.textColors.white;const messageColorKey=this.colors.message??"white";const messageColor=terminalColors.textColors[messageColorKey]??terminalColors.textColors.white;const timestampColorKey=this.colors.timestamp??"white";this._timestampColor=terminalColors.textColors[timestampColorKey]??terminalColors.textColors.white;this._appColorOpen=`${appNameColor}[ `;this._appColorClose=` ]${reset} `;const defaultAppPart=this.appName?`${this._appColorOpen}${this.appName}${this._appColorClose}`:"";const levels=["info","warn","error","debug"];for(const level of levels){const levelColorKey=this.colors.levels[level];const levelColor=terminalColors.textColors[levelColorKey]??terminalColors.textColors.blue;const levelPrefix=`${levelColor}${level.toUpperCase()}${reset}: ${messageColor}`;this._prefixCache[level]=`${defaultAppPart}${levelPrefix}`;this._levelPrefixCache[level]=levelPrefix}}static _formatTimestamp(){
 // Math.floor(Date.now() / 1000) costs ~50 ns but spares the ~1500 ns Date().toISOString() call
-// when the second has not changed -- large net saving during log bursts in the same second.
-const sec=Math.floor(Date.now()/1e3);if(sec!==this._cachedTimestampSec){const iso=(new Date).toISOString();this._cachedTimestamp=iso.slice(0,10)+" "+iso.slice(11,19)+"Z";this._cachedTimestampSec=sec}return this._cachedTimestamp}static formatMessage(level,messages,appName){const ts=this.useTimestamps?`${this._timestampColor}${this._formatTimestamp()}${this._reset} `:"";const prefix=appName?`${this._appColorOpen}${appName}${this._appColorClose}${this._levelPrefixCache[level]}`:this._prefixCache[level];const msg=messages.length===1?this.stringifyPart(messages[0]):messages.map(p=>this.stringifyPart(p)).join(" ");
+// When the second has not changed -- large net saving during log bursts in the same second.
+const sec=Math.floor(Date.now()/1e3);if(sec!==this._cachedTimestampSec){const iso=(new Date).toISOString();this._cachedTimestamp=`${iso.slice(0,10)} ${iso.slice(11,19)}Z`;this._cachedTimestampSec=sec}return this._cachedTimestamp}static formatMessage(level,messages,appName){const ts=this.useTimestamps?`${this._timestampColor}${this._formatTimestamp()}${this._reset} `:"";const prefix=appName?`${this._appColorOpen}${appName}${this._appColorClose}${this._levelPrefixCache[level]}`:this._prefixCache[level];const msg=messages.length===1?this.stringifyPart(messages[0]):messages.map(part=>this.stringifyPart(part)).join(" ");
 // V8 compiles 4-operand template literals to optimized string concat -- no array allocation needed.
 return`${ts}${prefix}${msg}${this._reset}`}
 /**
      * Log an info message to the console
-     * @param (...unknown[]) args - One or more values to log; supports legacy 2-arg appName override
-     * @returns void
-     */static info(...args){if(LEVEL_MAP.info<this.minLevel)return;const{appName,messages}=this.parseLogArguments(args);console.log(this.formatMessage("info",messages,appName))}
+     *
+     * @param (...unknown[]) Args - One or more values to log; supports legacy 2-arg appName override
+     * @returns Void
+     */static info(...args){if(LEVEL_MAP.info<this.minLevel){return}const{appName,messages}=this.parseLogArguments(args);console.log(this.formatMessage("info",messages,appName))}
 /**
      * Log a warning to the console
-     * @param (...unknown[]) args - One or more values to log; supports legacy 2-arg appName override
-     */static warn(...args){if(LEVEL_MAP.warn<this.minLevel)return;const{appName,messages}=this.parseLogArguments(args);console.warn(this.formatMessage("warn",messages,appName))}
+     *
+     * @param (...unknown[]) Args - One or more values to log; supports legacy 2-arg appName override
+     */static warn(...args){if(LEVEL_MAP.warn<this.minLevel){return}const{appName,messages}=this.parseLogArguments(args);console.warn(this.formatMessage("warn",messages,appName))}
 /**
      * Log an error to the console
-     * @param (...unknown[]) args - One or more values to log; supports legacy 2-arg appName override
-     */static error(...args){if(LEVEL_MAP.error<this.minLevel)return;const{appName,messages}=this.parseLogArguments(args);if(this.meowOnError){console.error(this.errorCatAscii)}console.error(this.formatMessage("error",messages,appName))}
+     *
+     * @param (...unknown[]) Args - One or more values to log; supports legacy 2-arg appName override
+     */static error(...args){if(LEVEL_MAP.error<this.minLevel){return}const{appName,messages}=this.parseLogArguments(args);if(this.meowOnError){console.error(this.errorCatAscii)}console.error(this.formatMessage("error",messages,appName))}
 /**
      * Log a debug message to the console
-     * @param (...unknown[]) args - One or more values to log; supports legacy 2-arg appName override
+     *
+     * @param (...unknown[]) Args - One or more values to log; supports legacy 2-arg appName override
      */static debug(...args){
-// debugMode guard first -- cheapest check; avoids minLevel compare in the common false case.
-if(!this.debugMode)return;if(LEVEL_MAP.debug<this.minLevel)return;const{appName,messages}=this.parseLogArguments(args);console.debug(this.formatMessage("debug",messages,appName))}static{Logena.rebuildCache()}}exports.default=Logena;exports.Logena=Logena;
+// DebugMode guard first -- cheapest check; avoids minLevel compare in the common false case.
+if(!this.debugMode){return}if(LEVEL_MAP.debug<this.minLevel){return}const{appName,messages}=this.parseLogArguments(args);console.debug(this.formatMessage("debug",messages,appName))}static{Logena.rebuildCache()}}exports.default=Logena;exports.Logena=Logena;

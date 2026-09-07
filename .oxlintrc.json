@@ -1,0 +1,33 @@
+{
+	"$schema": "./node_modules/oxlint/configuration_schema.json",
+	"plugins": ["typescript", "unicorn", "oxc", "import", "node", "promise"],
+	"categories": {
+		"correctness": "error",
+		"suspicious": "error",
+		"pedantic": "error",
+		"perf": "error",
+		"style": "error",
+		"restriction": "error",
+		"nursery": "error"
+	},
+	"env": {
+		"builtin": true,
+		"node": true
+	},
+	"ignorePatterns": ["dist", "tests"],
+	"rules": {
+		"one-var": ["error", "never"],
+		"max-statements": ["error", 40],
+		"max-lines": ["error", 500],
+		"max-lines-per-function": ["error", 100],
+
+		"no-console": "off",
+		"no-underscore-dangle": "off",
+		"no-undefined": "off",
+		"sort-keys": "off",
+		"no-ternary": "off",
+		"no-magic-numbers": "off",
+		"no-named-export": "off",
+		"no-default-export": "off"
+	}
+}

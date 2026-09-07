@@ -1,61 +1,59 @@
 {
-  "name": "logena",
-  "version": "1.1.0",
-  "description": "Simply Jena's nodejs logger",
-  "main": "./dist/logger.js",
-  "types": "./dist/logger.d.ts",
-  "exports": {
-    ".": {
-      "types": "./dist/logger.d.ts",
-      "import": "./dist/logger.js",
-      "require": "./dist/logger.js"
-    }
-  },
-  "files": [
-    "dist",
-    "README.md",
-    "LICENSE"
-  ],
-  "scripts": {
-    "build": "eslint . --fix && tsc && uglifyjs dist/logger.js --comments all -o dist/logger.js",
-    "test": "npm run build && npm run test:regression",
-    "test:regression": "node tests/logger.test.js",
-    "test:perf": "node tests/logger.test.js",
-    "beta": "npm publish --tag beta"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/abadima/logena.git"
-  },
-  "keywords": [
-    "colors",
-    "console",
-    "javascript",
-    "json",
-    "logger",
-    "nodejs",
-    "simple",
-    "string",
-    "timestamps"
-  ],
-  "author": "Abadima",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/abadima/logena/issues"
-  },
-  "homepage": "https://github.com/abadima/logena#readme",
-  "devDependencies": {
-    "@eslint/eslintrc": "^3.3.5",
-    "@eslint/js": "^9.39.4",
-    "@types/node": "^25.5.0",
-    "@typescript-eslint/eslint-plugin": "^8.58.0",
-    "@typescript-eslint/parser": "^8.58.0",
-    "eslint": "^9.39.4",
-    "globals": "^17.4.0",
-    "typescript-eslint": "^8.58.0",
-    "uglify-js": "^3.19.3"
-  },
-  "engines": {
-    "node": ">=14.0.0"
-  }
+	"name": "logena",
+	"version": "1.1.0",
+	"description": "Simply Jena's nodejs logger",
+	"keywords": [
+		"colors",
+		"console",
+		"javascript",
+		"json",
+		"logger",
+		"nodejs",
+		"simple",
+		"string",
+		"timestamps"
+	],
+	"homepage": "https://github.com/abadima/logena#readme",
+	"bugs": {
+		"url": "https://github.com/abadima/logena/issues"
+	},
+	"license": "MIT",
+	"author": "Abadima",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/abadima/logena.git"
+	},
+	"files": [
+		"dist",
+		"README.md",
+		"LICENSE"
+	],
+	"main": "./dist/logger.js",
+	"types": "./dist/logger.d.ts",
+	"exports": {
+		".": {
+			"types": "./dist/logger.d.ts",
+			"import": "./dist/logger.js",
+			"require": "./dist/logger.js"
+		}
+	},
+	"scripts": {
+		"format": "oxfmt",
+		"format:check": "oxfmt --check",
+		"build": "oxlint --fix && oxfmt && tsc && uglifyjs dist/logger.js --comments all -o dist/logger.js",
+		"test": "npm run build && npm run test:regression",
+		"test:regression": "node tests/logger.test.js",
+		"test:perf": "node tests/logger.test.js",
+		"beta": "npm publish --tag beta"
+	},
+	"devDependencies": {
+		"@types/node": "^26.5.0",
+		"oxfmt": "^0.67.0",
+		"oxlint": "^1.82.0",
+		"typescript": "^5.9.3",
+		"uglify-js": "^3.19.3"
+	},
+	"engines": {
+		"node": ">=14.0.0"
+	}
 }
