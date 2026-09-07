@@ -41,9 +41,7 @@
 		"format": "oxfmt",
 		"format:check": "oxfmt --check",
 		"build": "oxlint --fix && oxfmt && tsc && uglifyjs dist/logger.js --comments all -o dist/logger.js",
-		"test": "npm run build && npm run test:regression",
-		"test:regression": "node tests/logger.test.js",
-		"test:perf": "node tests/logger.test.js",
+		"test": "npm run build && node tests/logger.test.js",
 		"beta": "npm publish --tag beta"
 	},
 	"devDependencies": {
