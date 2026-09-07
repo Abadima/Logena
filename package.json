@@ -1,7 +1,7 @@
 {
 	"name": "logena",
 	"version": "1.1.0",
-	"description": "Simply Jena's nodejs logger",
+	"description": "The simplest and fastest logger. Used by Jena, made for you.",
 	"keywords": [
 		"colors",
 		"console",
@@ -38,17 +38,17 @@
 		}
 	},
 	"scripts": {
+		"beta": "npm publish --tag beta",
 		"format": "oxfmt",
-		"format:check": "oxfmt --check",
+		"benchmark": "npm run build && node --expose-gc benchmarks/run.mjs",
 		"build": "oxlint --fix && oxfmt && tsc && uglifyjs dist/logger.js --comments all -o dist/logger.js",
-		"test": "npm run build && node tests/logger.test.js",
-		"beta": "npm publish --tag beta"
+		"test": "npm run build && node tests/logger.test.js"
 	},
 	"devDependencies": {
 		"@types/node": "^26.5.0",
 		"oxfmt": "^0.67.0",
 		"oxlint": "^1.82.0",
-		"typescript": "^5.9.3",
+		"typescript": "^7.0.2",
 		"uglify-js": "^3.19.3"
 	},
 	"engines": {

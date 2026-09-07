@@ -107,18 +107,19 @@ Logena.debug("Hello, world!"); // 2024-10-15 18:00:00Z [LOGENA] DEBUG: Hello, wo
 
 # Performance
 
-Benchmarked at 100,000 iterations per level with console I/O suppressed, on an AMD Ryzen 9 9950X3D running Ubuntu 25.10.
+Benchmarked against various competitors: 50,000 iterations x 3 trials per scenario (median of trials). Measured on an AMD Ryzen 9 9950X3D running Ubuntu 26.04.
 
-| Level | Median | p95    | p99    | Mean   | Ops/sec    |
-| ----- | ------ | ------ | ------ | ------ | ---------- |
-| info  | 40 ns  | 60 ns  | 140 ns | 54 ns  | 25,000,000 |
-| warn  | 110 ns | 130 ns | 230 ns | 151 ns | 9,090,909  |
-| error | 60 ns  | 80 ns  | 90 ns  | 68 ns  | 16,666,667 |
-| debug | 190 ns | 220 ns | 270 ns | 211 ns | 5,263,158  |
+Average across four scenarios (simple string, structured object, error object, debug):
 
-Total RSS growth across all levels: **+11.695 MB**
+| Logger  | Median | p95    | p99    | Ops/sec   | RSS growth | vs logena    |
+| ------- | ------ | ------ | ------ | --------- | ---------- | ------------ |
+| logena  | 490 ns | 595 ns | 728 ns | 2,136,840 | +0.250 MB  | reference    |
+| consola | 530 ns | 548 ns | 560 ns | 1,940,524 | +0.000 MB  | 1.08x slower |
+| pino    | 1.0 us | 1.1 us | 1.4 us | 1,070,631 | +0.219 MB  | 2.10x slower |
+| winston | 1.1 us | 1.6 us | 2.0 us | 964,876   | +49.500 MB | 2.18x slower |
+| bole    | 1.2 us | 1.4 us | 1.8 us | 853,310   | +0.754 MB  | 2.51x slower |
 
-> Benchmarks are measured with console I/O suppressed to isolate formatting overhead. Real-world numbers will vary depending on output destination and system load.
+> These are aggregate averages; per-scenario numbers vary (consola, for example, is faster than logena on structured and debug logging but slower overall). Run `npm run benchmark` to reproduce, and see [`benchmarks/`](benchmarks) for the full per-scenario breakdown and methodology.
 
 # License
 

@@ -8,8 +8,9 @@
 		"declaration": true,
 		"esModuleInterop": true,
 		"forceConsistentCasingInFileNames": true,
-		"module": "commonjs",
-		"moduleResolution": "node",
+		"lib": ["ES2020", "DOM"],
+		"module": "node16",
+		"moduleResolution": "node16",
 		"noFallthroughCasesInSwitch": true,
 		"noImplicitAny": true,
 		"noImplicitReturns": true,
@@ -19,10 +20,12 @@
 		"outDir": "./dist",
 		"removeComments": false,
 		"resolveJsonModule": true,
+		"rootDir": "./src",
 		"strict": true,
 		"strictFunctionTypes": true,
 		"strictNullChecks": true,
-		"target": "ESNext"
+		"target": "ES2020",
+		"types": []
 	},
 	"exclude": ["node_modules", "dist", "tests"],
 	"include": ["src/logger.ts"]

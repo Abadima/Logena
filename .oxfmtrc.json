@@ -10,5 +10,5 @@
 	"sortImports": true,
 	"sortPackageJson": true,
 	"jsdoc": true,
-	"ignorePatterns": ["dist", "tests"]
+	"ignorePatterns": ["dist", "tests", "benchmarks/node_modules"]
 }

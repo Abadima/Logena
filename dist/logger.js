@@ -24,17 +24,7 @@ const LEVEL_MAP={debug:0,info:1,warn:2,error:3};
  * 	logger.info("This is a log message");
  *
  * @class Logena
- */class Logena{static defaultErrorCat=" /\\_/\\\n( o.o )\n > ^ <  meow!";static appName="";static colors={levels:{info:"blue",warn:"yellow",error:"red",debug:"cyan"}};static debugMode=false;static useTimestamps=false;static meowOnError=false;static errorCatAscii=Logena.defaultErrorCat;
-// MinLevel: numeric gate applied before argument parsing -- zero cost when at default (0 = debug).
-static minLevel=0;
-// NoColor: strips all ANSI escape codes; useful for CI pipelines and file-based log sinks.
-static noColor=false;
-// SerializeObjects: false emits type shorthands ([Object], [Array]) -- zero JSON parse cost.
-static serializeObjects=true;static _prefixCache={info:"",warn:"",error:"",debug:""};static _levelPrefixCache={info:"",warn:"",error:"",debug:""};static _timestampColor="";static _appColorOpen="";static _appColorClose="";
-// Cached reset code -- empty string when noColor is true, avoids branching inside formatMessage.
-static _reset=terminalColors.reset;
-// Per-second timestamp cache: avoids new Date().toISOString() (~1500 ns) on every log call.
-static _cachedTimestamp="";static _cachedTimestampSec=-1;static parseLogArguments(args){if(args.length===2&&typeof args[1]==="string"&&(typeof args[0]==="string"||typeof args[0]==="object")){return{appName:args[1],messages:[args[0]]}}return{messages:args}}static stringifyPart(part){if(typeof part==="string"){return part}
+ */class Logena{static parseLogArguments(args){if(args.length===2&&typeof args[1]==="string"&&(typeof args[0]==="string"||typeof args[0]==="object")){return{appName:args[1],messages:[args[0]]}}return{messages:args}}static stringifyPart(part){if(typeof part==="string"){return part}
 // Error instances: always emit stack (includes message) -- JSON.stringify drops the stack.
 if(part instanceof Error){return part.stack??part.message}if(!this.serializeObjects){if(part===null){return"null"}if(Array.isArray(part)){return"[Array]"}if(typeof part==="object"){return"[Object]"}return String(part)}try{return JSON.stringify(part)}catch{return String(part)}}static set(config){if(config.appName!==undefined){this.appName=config.appName}if(config.debug!==undefined){this.debugMode=config.debug}if(config.useTimestamps!==undefined){this.useTimestamps=config.useTimestamps}if(config.meowOnError!==undefined){this.meowOnError=config.meowOnError}if(config.errorCatAscii!==undefined){this.errorCatAscii=config.errorCatAscii.trim()?config.errorCatAscii:Logena.defaultErrorCat}if(config.minLevel!==undefined){this.minLevel=LEVEL_MAP[config.minLevel]}if(config.noColor!==undefined){this.noColor=config.noColor}if(config.serializeObjects!==undefined){this.serializeObjects=config.serializeObjects}if(config.colors!==undefined){const colorsConfig=config.colors;if(colorsConfig.timestamp!==undefined){this.colors.timestamp=colorsConfig.timestamp}if(colorsConfig.appName!==undefined){this.colors.appName=colorsConfig.appName}if(colorsConfig.message!==undefined){this.colors.message=colorsConfig.message}if(colorsConfig.levels!==undefined){const levelsConfig=colorsConfig.levels;if(levelsConfig.info!==undefined){this.colors.levels.info=levelsConfig.info}if(levelsConfig.warn!==undefined){this.colors.levels.warn=levelsConfig.warn}if(levelsConfig.error!==undefined){this.colors.levels.error=levelsConfig.error}if(levelsConfig.debug!==undefined){this.colors.levels.debug=levelsConfig.debug}}}this.rebuildCache()}static rebuildCache(){
 // NoColor path: emit ANSI-free plain text -- shorter strings, no escape code overhead in pipelines.
@@ -66,4 +56,14 @@ return`${ts}${prefix}${msg}${this._reset}`}
      * @param (...unknown[]) Args - One or more values to log; supports legacy 2-arg appName override
      */static debug(...args){
 // DebugMode guard first -- cheapest check; avoids minLevel compare in the common false case.
-if(!this.debugMode){return}if(LEVEL_MAP.debug<this.minLevel){return}const{appName,messages}=this.parseLogArguments(args);console.debug(this.formatMessage("debug",messages,appName))}static{Logena.rebuildCache()}}exports.default=Logena;exports.Logena=Logena;
+if(!this.debugMode){return}if(LEVEL_MAP.debug<this.minLevel){return}const{appName,messages}=this.parseLogArguments(args);console.debug(this.formatMessage("debug",messages,appName))}}exports.default=Logena;exports.Logena=Logena;Logena.defaultErrorCat=" /\\_/\\\n( o.o )\n > ^ <  meow!";Logena.appName="";Logena.colors={levels:{info:"blue",warn:"yellow",error:"red",debug:"cyan"}};Logena.debugMode=false;Logena.useTimestamps=false;Logena.meowOnError=false;Logena.errorCatAscii=Logena.defaultErrorCat;
+// MinLevel: numeric gate applied before argument parsing -- zero cost when at default (0 = debug).
+Logena.minLevel=0;
+// NoColor: strips all ANSI escape codes; useful for CI pipelines and file-based log sinks.
+Logena.noColor=false;
+// SerializeObjects: false emits type shorthands ([Object], [Array]) -- zero JSON parse cost.
+Logena.serializeObjects=true;Logena._prefixCache={info:"",warn:"",error:"",debug:""};Logena._levelPrefixCache={info:"",warn:"",error:"",debug:""};Logena._timestampColor="";Logena._appColorOpen="";Logena._appColorClose="";
+// Cached reset code -- empty string when noColor is true, avoids branching inside formatMessage.
+Logena._reset=terminalColors.reset;
+// Per-second timestamp cache: avoids new Date().toISOString() (~1500 ns) on every log call.
+Logena._cachedTimestamp="";Logena._cachedTimestampSec=-1;(()=>{Logena.rebuildCache()})();

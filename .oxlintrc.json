@@ -14,7 +14,7 @@
 		"builtin": true,
 		"node": true
 	},
-	"ignorePatterns": ["dist", "tests"],
+	"ignorePatterns": ["dist", "tests", "benchmarks/node_modules"],
 	"rules": {
 		"one-var": ["error", "never"],
 		"max-statements": ["error", 40],
@@ -28,6 +28,15 @@
 		"no-ternary": "off",
 		"no-magic-numbers": "off",
 		"no-named-export": "off",
-		"no-default-export": "off"
+		"no-default-export": "off",
+		"prefer-default-export": "off",
+		"no-nodejs-modules": "off",
+		"no-relative-parent-imports": "off",
+		"capitalized-comments": "off",
+		"no-rest-spread-properties": "off",
+		"no-optional-chaining": "off",
+		"sort-imports": "off",
+		"no-sync": "off",
+		"prefer-await-to-callbacks": "off"
 	}
 }
