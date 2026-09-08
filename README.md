@@ -99,10 +99,10 @@ Logena.set({
 	},
 	useTimestamps: true,
 });
-Logena.info("Hello, world!"); // 2024-10-15 18:00:00Z [LOGENA] INFO: Hello, world!
-Logena.warn("Hello, world!"); // 2024-10-15 18:00:00Z [LOGENA] WARN: Hello, world!
-Logena.error("Hello, world!"); // 2024-10-15 18:00:00Z [LOGENA] ERROR: Hello, world!
-Logena.debug("Hello, world!"); // 2024-10-15 18:00:00Z [LOGENA] DEBUG: Hello, world!
+Logena.info("Hello, world!"); // 2024-10-15 18:00:00Z [ LOGENA ] INFO: Hello, world!
+Logena.warn("Hello, world!"); // 2024-10-15 18:00:00Z [ LOGENA ] WARN: Hello, world!
+Logena.error("Hello, world!"); // 2024-10-15 18:00:00Z [ LOGENA ] ERROR: Hello, world!
+Logena.debug("Hello, world!"); // 2024-10-15 18:00:00Z [ LOGENA ] DEBUG: Hello, world!
 ```
 
 # Performance
@@ -111,15 +111,17 @@ Benchmarked against various competitors: 50,000 iterations x 3 trials per scenar
 
 Average across four scenarios (simple string, structured object, error object, debug):
 
-| Logger  | Median | p95    | p99    | Ops/sec   | RSS growth | vs logena    |
-| ------- | ------ | ------ | ------ | --------- | ---------- | ------------ |
-| logena  | 490 ns | 595 ns | 728 ns | 2,136,840 | +0.250 MB  | reference    |
-| consola | 530 ns | 548 ns | 560 ns | 1,940,524 | +0.000 MB  | 1.08x slower |
-| pino    | 1.0 us | 1.1 us | 1.4 us | 1,070,631 | +0.219 MB  | 2.10x slower |
-| winston | 1.1 us | 1.6 us | 2.0 us | 964,876   | +49.500 MB | 2.18x slower |
-| bole    | 1.2 us | 1.4 us | 1.8 us | 853,310   | +0.754 MB  | 2.51x slower |
+| Logger  | Median | p95    | p99    | Ops/sec   | Retained heap | vs logena    |
+| ------- | ------ | ------ | ------ | --------- | ------------- | ------------ |
+| logena  | 458 ns | 550 ns | 693 ns | 2,248,185 | +0.004 MB     | reference    |
+| consola | 535 ns | 595 ns | 668 ns | 1,921,791 | +0.003 MB     | 1.17x slower |
+| pino    | 1.0 us | 1.1 us | 1.3 us | 1,074,351 | +0.000 MB     | 2.21x slower |
+| winston | 1.1 us | 1.6 us | 2.0 us | 971,913   | +45.891 MB    | 2.31x slower |
+| bole    | 1.2 us | 1.4 us | 1.7 us | 853,679   | +0.003 MB     | 2.66x slower |
 
 > These are aggregate averages; per-scenario numbers vary (consola, for example, is faster than logena on structured and debug logging but slower overall). Run `npm run benchmark` to reproduce, and see [`benchmarks/`](benchmarks) for the full per-scenario breakdown and methodology.
+
+> **On the memory column:** this is heap retained after a forced GC, not RSS growth. Raw RSS also counts V8/OS arena growth that is never returned to the OS, which made it report ~1 MB even for a no-op payload — so the old numbers said more about the harness than about any logger. Measured this way, every logger here except winston holds effectively nothing.
 
 # License
 

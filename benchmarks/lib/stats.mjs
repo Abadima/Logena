@@ -33,10 +33,13 @@ const benchmarkScenario = (fn, iterations) => {
 		fn();
 	}
 
-	forceGc();
-	const rss0 = process.memoryUsage().rss;
-
+	// Allocated before the baseline snapshot: 50k x 8 B is ~0.4 MB, and charging the harness's own
+	// sample buffer to the logger under test was the bulk of the old RSS numbers.
 	const samples = new Float64Array(iterations);
+
+	forceGc();
+	const heapBefore = process.memoryUsage().heapUsed;
+
 	for (let index = 0; index < iterations; index += 1) {
 		const start = process.hrtime.bigint();
 		fn();
@@ -44,10 +47,12 @@ const benchmarkScenario = (fn, iterations) => {
 	}
 
 	forceGc();
-	const rss1 = process.memoryUsage().rss;
+	const heapAfter = process.memoryUsage().heapUsed;
 
 	const stats = summarize(samples);
-	stats.rssMb = Math.max(0, rss1 - rss0) / (1024 * 1024);
+	// Retained heap after a forced GC -- what the logger still holds. RSS also counts V8/OS arena
+	// growth and never shrinks back, so it reported ~1 MB even for a no-op payload.
+	stats.retainedMb = Math.max(0, heapAfter - heapBefore) / (1024 * 1024);
 	return stats;
 };
 
@@ -67,7 +72,7 @@ const runTrials = (fn, iterations, trials) => {
 		p99: median(runs.map((run) => run.p99)),
 		mean: median(runs.map((run) => run.mean)),
 		opsPerSec: Math.round(median(runs.map((run) => run.opsPerSec))),
-		rssMb: median(runs.map((run) => run.rssMb)),
+		retainedMb: median(runs.map((run) => run.retainedMb)),
 	};
 };
 

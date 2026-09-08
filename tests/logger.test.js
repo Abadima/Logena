@@ -129,6 +129,23 @@ describe("Functional tests", () => {
         });
     });
 
+    test("multiple arguments are space-joined in order", () => {
+        const line = capture("log", () => Logena.info("a", 1, true, null))[0];
+        assert.equal(line, "INFO: a 1 true null");
+    });
+
+    test("timestamp cache is invalidated when color mode changes", () => {
+        Logena.set({ useTimestamps: true, noColor: true });
+        const plain = capture("log", () => Logena.info("plain"))[0];
+        assert.ok(!plain.includes("\x1b"));
+
+        // Within the same wall-clock second, so this only passes if changing colors invalidates
+        // the cached timestamp segment rather than serving the stale plain-text one.
+        Logena.set({ noColor: false });
+        const colored = capture("log", () => Logena.info("colored"))[0];
+        assert.ok(colored.startsWith("\x1b"));
+    });
+
     test("named and default exports both work", () => {
         const pkg = require("../dist/logger");
         assert.equal(typeof pkg.Logena.info, "function");

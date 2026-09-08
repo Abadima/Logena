@@ -52,7 +52,7 @@ const averageStats = (statsList) => {
 		p99: sumBy((stats) => stats.p99) / count,
 		mean: sumBy((stats) => stats.mean) / count,
 		opsPerSec: Math.round(sumBy((stats) => stats.opsPerSec) / count),
-		rssMb: sumBy((stats) => stats.rssMb) / count,
+		retainedMb: sumBy((stats) => stats.retainedMb) / count,
 	};
 };
 
@@ -61,7 +61,7 @@ const printStatsTable = (title, rows) => {
 
 	process.stdout.write(`\n${title}\n`);
 	process.stdout.write(
-		"logger    median    p95       p99       mean      ops/sec       rss MB    vs logena\n",
+		"logger    median    p95       p99       mean      ops/sec       retained MB  vs logena\n",
 	);
 	process.stdout.write(`${"-".repeat(90)}\n`);
 
@@ -69,7 +69,7 @@ const printStatsTable = (title, rows) => {
 		const relativeLabel =
 			name === "logena" ? "reference" : relativeToBaseline(baseline.median, stats.median);
 		process.stdout.write(
-			`${name.padEnd(9)} ${fmtNs(stats.median).padEnd(9)} ${fmtNs(stats.p95).padEnd(9)} ${fmtNs(stats.p99).padEnd(9)} ${fmtNs(stats.mean).padEnd(9)} ${fmtOps(stats.opsPerSec).padEnd(13)} +${stats.rssMb.toFixed(3).padEnd(9)} ${relativeLabel}\n`,
+			`${name.padEnd(9)} ${fmtNs(stats.median).padEnd(9)} ${fmtNs(stats.p95).padEnd(9)} ${fmtNs(stats.p99).padEnd(9)} ${fmtNs(stats.mean).padEnd(9)} ${fmtOps(stats.opsPerSec).padEnd(13)} +${stats.retainedMb.toFixed(3).padEnd(11)} ${relativeLabel}\n`,
 		);
 	}
 };
@@ -77,14 +77,14 @@ const printStatsTable = (title, rows) => {
 const printMemoryTable = (results) => {
 	const columnWidth = Math.max(10, ...SCENARIOS.map((scenario) => scenario.label.length + 1));
 
-	process.stdout.write("\nmemory (RSS growth in MB per scenario)\n");
+	process.stdout.write("\nmemory (retained heap in MB per scenario, after forced GC)\n");
 	process.stdout.write(
 		`logger    ${SCENARIOS.map((scenario) => scenario.label.padEnd(columnWidth)).join("")}total\n`,
 	);
 	process.stdout.write(`${"-".repeat(10 + columnWidth * SCENARIOS.length + 6)}\n`);
 
 	for (const adapter of adapters) {
-		const perScenario = SCENARIOS.map(({ key }) => results[adapter.name][key]?.rssMb);
+		const perScenario = SCENARIOS.map(({ key }) => results[adapter.name][key]?.retainedMb);
 		const total = perScenario.reduce((sum, value) => sum + (value ?? 0), 0);
 		const cells = perScenario.map((value) =>
 			value === undefined ? "n/a".padEnd(columnWidth) : `+${value.toFixed(3)}`.padEnd(columnWidth),

@@ -8,7 +8,6 @@ const terminalColors = {
 	hidden: "\u001B[8m",
 
 	textColors: {
-		// Standard ANSI 16 colors (backward compatible)
 		black: "\u001B[30m",
 		brightBlue: "\u001B[94m",
 		brightCyan: "\u001B[96m",
@@ -25,7 +24,6 @@ const terminalColors = {
 		white: "\u001B[97m",
 		yellow: "\u001B[33m",
 
-		// Extended ANSI 256-color variants (light/dark/rich shades)
 		lightGray: "\u001B[38;5;250m",
 		darkGray: "\u001B[38;5;59m",
 		lightRed: "\u001B[38;5;210m",
@@ -43,7 +41,6 @@ const terminalColors = {
 		orange: "\u001B[38;5;214m",
 		lightOrange: "\u001B[38;5;216m",
 
-		// Additional useful variants
 		teal: "\u001B[38;5;36m",
 		lime: "\u001B[38;5;82m",
 		navy: "\u001B[38;5;18m",
@@ -57,7 +54,6 @@ const terminalColors = {
 		khaki: "\u001B[38;5;185m",
 		tan: "\u001B[38;5;180m",
 
-		// Semantic color names (intentional, composable)
 		success: "\u001B[38;5;82m",
 		failure: "\u001B[38;5;167m",
 		warning: "\u001B[38;5;214m",
@@ -74,18 +70,15 @@ const LEVEL_MAP = { debug: 0, info: 1, warn: 2, error: 3 } as const;
 type LevelName = keyof typeof LEVEL_MAP;
 
 /**
- * Logger Class
+ * Logena
  *
- * A simple logger class that can be used to log messages to the console.
- *
- * @example
- * 	const logger = new Logger();
+ * A simple logger. Every member is static, so there is nothing to instantiate.
  *
  * @example
- * 	logger.set({ debug: true, appName: "MyApp", useTimestamps: true });
+ * 	Logena.set({ debug: true, appName: "MyApp", useTimestamps: true });
  *
  * @example
- * 	logger.info("This is a log message");
+ * 	Logena.info("This is a log message");
  *
  * @class Logena
  */
@@ -114,11 +107,8 @@ class Logena {
 	private static useTimestamps = false;
 	private static meowOnError = false;
 	private static errorCatAscii: string = Logena.defaultErrorCat;
-	// MinLevel: numeric gate applied before argument parsing -- zero cost when at default (0 = debug).
 	private static minLevel = 0;
-	// NoColor: strips all ANSI escape codes; useful for CI pipelines and file-based log sinks.
 	private static noColor = false;
-	// SerializeObjects: false emits type shorthands ([Object], [Array]) -- zero JSON parse cost.
 	private static serializeObjects = true;
 
 	private static _prefixCache: { info: string; warn: string; error: string; debug: string } = {
@@ -136,11 +126,11 @@ class Logena {
 	private static _timestampColor = "";
 	private static _appColorOpen = "";
 	private static _appColorClose = "";
-	// Cached reset code -- empty string when noColor is true, avoids branching inside formatMessage.
+	// Baked in so formatMessage never branches on noColor.
 	private static _reset: string = terminalColors.reset;
-	// Per-second timestamp cache: avoids new Date().toISOString() (~1500 ns) on every log call.
-	private static _cachedTimestamp = "";
-	private static _cachedTimestampSec = -1;
+	// Fully rendered timestamp segment, cached per second; rebuildCache() invalidates it since colors are baked in.
+	private static _tsSegment = "";
+	private static _tsSecond = -1;
 
 	private static parseLogArguments(args: unknown[]): { appName?: string; messages: unknown[] } {
 		if (
@@ -259,7 +249,8 @@ class Logena {
 	}
 
 	private static rebuildCache(): void {
-		// NoColor path: emit ANSI-free plain text -- shorter strings, no escape code overhead in pipelines.
+		// Timestamp segment has colors baked in, so a color change invalidates it too.
+		this._tsSecond = -1;
 		if (this.noColor) {
 			this._reset = "";
 			this._timestampColor = "";
@@ -300,16 +291,16 @@ class Logena {
 		}
 	}
 
-	private static _formatTimestamp(): string {
-		// Math.floor(Date.now() / 1000) costs ~50 ns but spares the ~1500 ns Date().toISOString() call
-		// When the second has not changed -- large net saving during log bursts in the same second.
-		const sec = Math.floor(Date.now() / 1000);
-		if (sec !== this._cachedTimestampSec) {
-			const iso = new Date().toISOString();
-			this._cachedTimestamp = `${iso.slice(0, 10)} ${iso.slice(11, 19)}Z`;
-			this._cachedTimestampSec = sec;
+	private static _timestampSegment(): string {
+		// Rebuilt once per second; the text comes from that same cached second, so it can
+		// never disagree with the key it is stored under.
+		const second = Math.floor(Date.now() / 1000);
+		if (second !== this._tsSecond) {
+			const iso = new Date(second * 1000).toISOString();
+			this._tsSecond = second;
+			this._tsSegment = `${this._timestampColor}${iso.slice(0, 10)} ${iso.slice(11, 19)}Z${this._reset} `;
 		}
-		return this._cachedTimestamp;
+		return this._tsSegment;
 	}
 
 	private static formatMessage(
@@ -317,16 +308,16 @@ class Logena {
 		messages: unknown[],
 		appName?: string,
 	): string {
-		const ts = this.useTimestamps
-			? `${this._timestampColor}${this._formatTimestamp()}${this._reset} `
-			: "";
+		const ts = this.useTimestamps ? this._timestampSegment() : "";
 		const prefix = appName
 			? `${this._appColorOpen}${appName}${this._appColorClose}${this._levelPrefixCache[level]}`
 			: this._prefixCache[level];
-		const msg =
-			messages.length === 1
-				? this.stringifyPart(messages[0])
-				: messages.map((part) => this.stringifyPart(part)).join(" ");
+		// Avoids the closure + intermediate array + join buffer that .map().join(" ") would allocate.
+		const count = messages.length;
+		let msg = count === 0 ? "" : this.stringifyPart(messages[0]);
+		for (let index = 1; index < count; index += 1) {
+			msg += ` ${this.stringifyPart(messages[index])}`;
+		}
 		// V8 compiles 4-operand template literals to optimized string concat -- no array allocation needed.
 		return `${ts}${prefix}${msg}${this._reset}`;
 	}
@@ -380,7 +371,7 @@ class Logena {
 	 * @param (...unknown[]) Args - One or more values to log; supports legacy 2-arg appName override
 	 */
 	public static debug(...args: unknown[]): void {
-		// DebugMode guard first -- cheapest check; avoids minLevel compare in the common false case.
+		// Cheapest check first, so the common disabled case skips the minLevel compare too.
 		if (!this.debugMode) {
 			return;
 		}

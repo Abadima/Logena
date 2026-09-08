@@ -68,18 +68,15 @@ declare const LEVEL_MAP: {
 };
 type LevelName = keyof typeof LEVEL_MAP;
 /**
- * Logger Class
+ * Logena
  *
- * A simple logger class that can be used to log messages to the console.
- *
- * @example
- * 	const logger = new Logger();
+ * A simple logger. Every member is static, so there is nothing to instantiate.
  *
  * @example
- * 	logger.set({ debug: true, appName: "MyApp", useTimestamps: true });
+ * 	Logena.set({ debug: true, appName: "MyApp", useTimestamps: true });
  *
  * @example
- * 	logger.info("This is a log message");
+ * 	Logena.info("This is a log message");
  *
  * @class Logena
  */
@@ -100,8 +97,8 @@ declare class Logena {
     private static _appColorOpen;
     private static _appColorClose;
     private static _reset;
-    private static _cachedTimestamp;
-    private static _cachedTimestampSec;
+    private static _tsSegment;
+    private static _tsSecond;
     private static parseLogArguments;
     private static stringifyPart;
     static set(config: {
@@ -126,7 +123,7 @@ declare class Logena {
         };
     }): void;
     private static rebuildCache;
-    private static _formatTimestamp;
+    private static _timestampSegment;
     private static formatMessage;
     /**
      * Log an info message to the console
