@@ -1,0 +1,57 @@
+{
+	"name": "logena",
+	"version": "1.1.1",
+	"description": "The simplest and fastest logger. Used by Jena, made for you.",
+	"keywords": [
+		"colors",
+		"console",
+		"javascript",
+		"json",
+		"logger",
+		"nodejs",
+		"simple",
+		"string",
+		"timestamps"
+	],
+	"homepage": "https://github.com/abadima/logena#readme",
+	"bugs": {
+		"url": "https://github.com/abadima/logena/issues"
+	},
+	"license": "MIT",
+	"author": "Abadima",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/abadima/logena.git"
+	},
+	"files": [
+		"dist",
+		"README.md",
+		"LICENSE"
+	],
+	"main": "./dist/logger.cjs",
+	"types": "./dist/logger.d.ts",
+	"exports": {
+		".": {
+			"types": "./dist/logger.d.ts",
+			"import": "./dist/logger.mjs",
+			"require": "./dist/logger.cjs"
+		}
+	},
+	"scripts": {
+		"beta": "npm publish --tag beta",
+		"format": "oxfmt",
+		"benchmark": "npm run build && node --expose-gc benchmarks/run.mjs",
+		"build": "oxlint --fix && oxfmt && tsc --emitDeclarationOnly && esbuild src/logger.ts --format=cjs --minify --outfile=dist/logger.cjs && esbuild src/logger.ts --format=esm --minify --outfile=dist/logger.mjs",
+		"prepublishOnly": "npm run build",
+		"test": "npm run build && node tests/logger.test.js"
+	},
+	"devDependencies": {
+		"esbuild": "^0.28.2",
+		"oxfmt": "^0.67.0",
+		"oxlint": "^1.85.0",
+		"typescript": "^7.0.2"
+	},
+	"engines": {
+		"node": ">=14.0.0"
+	}
+}
