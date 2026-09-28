@@ -10,20 +10,29 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v4
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v7
         with:
-          node-version: 22
+          node-version: 24
 
       - run: npm install
       - run: npm test
 
-      - name: Publish build output to build branch
+      - name: Prepare build branch
         run: |
+          mkdir -p /tmp/package
+          cp -r dist package.json README.md LICENSE /tmp/package/
+
+          git checkout --orphan build
+          git rm -rf .
+          cp -r /tmp/package/* .
+
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add -f dist
+
+          git add dist package.json README.md LICENSE
           git commit -m "Build ${GITHUB_SHA}"
-          git push origin HEAD:build --force
+          git push origin build --force
