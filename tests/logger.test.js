@@ -2,7 +2,7 @@
 
 const { test, describe, beforeEach } = require("node:test");
 const assert = require("node:assert/strict");
-const { Logena } = require("../dist/logger");
+const { Logena } = require("../dist/logger.cjs");
 
 function capture(method, fn) {
     const lines = [];
@@ -146,8 +146,8 @@ describe("Functional tests", () => {
         assert.ok(colored.startsWith("\x1b"));
     });
 
-    test("named and default exports both work", () => {
-        const pkg = require("../dist/logger");
+    test("named and default exports both work via require()", () => {
+        const pkg = require("../dist/logger.cjs");
         assert.equal(typeof pkg.Logena.info, "function");
         assert.strictEqual(pkg.default, pkg.Logena);
     });

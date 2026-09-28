@@ -28,7 +28,7 @@ Prioritize a **triple focus** when resolving conflicts:
 Imports follow a **visual descending-length staircase** (longest lines first):
 
 ```typescript
-import { type LogLevel, type ColorMap, Logena } from "../logger.js";
+import { type LogLevel, type ColorMap, Logena } from "../logger.mjs";
 import type { TerminalColors } from "./types.js";
 import { ms } from "../utilities/ms.js";
 ```

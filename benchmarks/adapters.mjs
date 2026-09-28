@@ -3,7 +3,7 @@ import { createConsola } from "consola";
 import pino from "pino";
 import winston from "winston";
 
-import { Logena } from "../dist/logger.js";
+import { Logena } from "../dist/logger.mjs";
 import {
 	SAMPLE_ERROR,
 	SIMPLE_MESSAGE,

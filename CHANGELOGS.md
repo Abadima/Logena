@@ -9,18 +9,19 @@ This project adheres to [Semantic Versioning](https://semver.org/) starting `v1.
 ### Fixed
 
 - Timestamp cache could render a timestamp one second ahead when the cached second and the rendered text came from two separate clock reads that straddled a tick. Text is now derived from the cached second itself.
+- `import Logena from "logena"` resolved to `{ default, Logena }` under native ESM/bundler interop instead of the class, throwing `Logena.set is not a function`. Now ships as separate `dist/logger.cjs` and `dist/logger.mjs` builds, so `require`, default import, and named import all resolve correctly.
 
 ### Performance
 
 - `formatMessage()` builds multi-argument messages with a loop instead of `.map().join(" ")`, skipping a closure and array allocation per call.
 - Timestamp cache now stores the fully rendered segment instead of just the text, so a cache hit is a plain field read.
-- `build` now runs `uglifyjs -c -m` instead of `--comments all`. `dist/logger.js` down from 9.2 KB to 5.5 KB.
 - Removed `bright`, `dim`, `underscore`, `blink`, `reverse`, `hidden` from `terminalColors` — unused, and not part of the public color-key type.
 
 ### Changed
 
 - Benchmark's memory column now reports heap retained after a forced GC instead of raw RSS growth, which was mostly measuring the benchmark harness itself. See `benchmarks/`.
 - README performance table and output examples updated to match.
+- Build now uses `esbuild` (replacing `uglify-js`) to compile and minify both output formats directly; `tsc` only emits type declarations. `dist/logger.cjs` is 6.0 KB, `dist/logger.mjs` is 5.5 KB.
 
 ### Testing
 
@@ -30,14 +31,10 @@ This project adheres to [Semantic Versioning](https://semver.org/) starting `v1.
 
 ### Added
 
-- `appName` parameter on every log level, to override the preset name for a single call.
-- 32 new ANSI 256-color variants, including semantic names like `success`, `failure`, `warning`, `accent`.
-- Explicit `exports` field in `package.json`.
-- `tests/` directory with a `node:test` regression suite.
-- `meowOnError` config, with an optional `errorCatAscii` override.
-- Variadic log arguments — `Logena.info("x", { a: 1 }, 123, true)` and similar now work.
-- `minLevel`, `noColor`, and `serializeObjects` options on `set()`.
-- `LevelName` type export, for typed `minLevel` arguments.
+- `appName` per-call override, 32 new ANSI 256-color variants (`success`, `failure`, `warning`, etc.), explicit `exports` field.
+- `meowOnError` config with optional `errorCatAscii` override.
+- Variadic log arguments and `minLevel`, `noColor`, `serializeObjects` config options.
+- `LevelName` type export and `tests/` directory with `node:test` suite.
 
 ### Fixed
 
