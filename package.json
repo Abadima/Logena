@@ -42,6 +42,7 @@
 		"format": "oxfmt",
 		"benchmark": "npm run build && node --expose-gc benchmarks/run.mjs",
 		"build": "oxlint --fix && oxfmt && tsc --emitDeclarationOnly && esbuild src/logger.ts --format=cjs --minify --outfile=dist/logger.cjs && esbuild src/logger.ts --format=esm --minify --outfile=dist/logger.mjs",
+		"prepublishOnly": "npm run build",
 		"test": "npm run build && node tests/logger.test.js"
 	},
 	"devDependencies": {

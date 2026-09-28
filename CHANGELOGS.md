@@ -22,6 +22,7 @@ This project adheres to [Semantic Versioning](https://semver.org/) starting `v1.
 - Benchmark's memory column now reports heap retained after a forced GC instead of raw RSS growth, which was mostly measuring the benchmark harness itself. See `benchmarks/`.
 - README performance table and output examples updated to match.
 - Build now uses `esbuild` (replacing `uglify-js`) to compile and minify both output formats directly; `tsc` only emits type declarations. `dist/logger.cjs` is 6.0 KB, `dist/logger.mjs` is 5.5 KB.
+- `dist/` is no longer committed to `main`; a CI workflow now builds and pushes it to a `build` branch on every push, for testing before `npm publish`.
 
 ### Testing
 
